@@ -2,9 +2,9 @@
 #ifndef _LOGGER_H_
 #define _LOGGER_H_
 
-#include <string>
 #include <string_view>
 #include <filesystem>
+#include <memory>
 
 namespace tll { //test Logger library
 
@@ -31,19 +31,18 @@ public:
 	logger(logger&&) = default;
 	auto operator=(logger&&) -> logger& = default;
 
-	auto set_default_importance(importance) -> void;
+	auto set_default_importance(importance) noexcept -> void;
+
 	auto message_write(std::string_view, importance) const -> void;
 	auto message_write(message) const -> void;
-	auto message_write(std::string_view) const -> void;
-
-	auto operator<<(std::string_view) const -> const logger&;
 	auto operator<<(message) const -> const logger&;
 
-private:
-	auto importance_to_string(importance) const -> std::string;
+	auto message_write(std::string_view) const -> void;
+	auto operator<<(std::string_view) const -> const logger&;
 
-	struct Impl;
-	std::unique_ptr<Impl> pimpl_;
+private:
+	struct impl;
+	std::unique_ptr<impl> pimpl_;
 };
 
 
