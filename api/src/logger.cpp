@@ -24,7 +24,7 @@ namespace {
 }
 
 struct logger::impl {
-	impl(const std::filesystem::path& path, importance imp = logger::LOW) : file_(path, std::ios::out | std::ios::app), default_importance_(imp) 
+	impl(const std::filesystem::path& path, importance imp) : file_(path, std::ios::out | std::ios::app), default_importance_(imp) 
 	{}
 	std::ofstream file_;
 	importance default_importance_;
@@ -35,6 +35,8 @@ logger::logger(const std::filesystem::path& path, importance default_importance)
 		throw std::ios_base::failure("Failed to open file: " + path.string());
 	}
 }
+
+logger::~logger() = default;
 
 auto logger::set_default_importance(importance imp) noexcept -> void {
 	pimpl_->default_importance_ = imp;

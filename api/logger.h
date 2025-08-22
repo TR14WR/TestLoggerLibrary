@@ -23,7 +23,7 @@ public:
 	};
 
 	explicit logger(const std::filesystem::path&, importance);
-	~logger() = default;
+	~logger();
 
 	logger(const logger&) = delete;
 	auto operator=(const logger&) -> logger& = delete;
