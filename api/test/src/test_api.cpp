@@ -1,55 +1,146 @@
 #include "../../logger.h"
+#include <iostream>
+#include <filesystem>
+#include <string>
+#include <fstream>
 
-void test1() {
-	tll::logger log("logfile.txt", tll::logger::LOW);
-	log.message_write("the first message", tll::logger::LOW);
-	log.message_write("the second message", tll::logger::MEDIUM);
-	log.message_write("the third message", tll::logger::CRITICAL);
-}
+class test_logger final {
+private:
+  std::string msg_string_;
 
-void test2() {
-	tll::logger log("logfile.txt", tll::logger::MEDIUM);
-	log.message_write("the first message", tll::logger::LOW);
-	log.message_write("the second message", tll::logger::MEDIUM);
-	log.message_write("the third message", tll::logger::CRITICAL);
-}
+  auto write_msg_foo(tll::logger::importance default_imp_) -> void {
+    tll::logger log("logFile.txt", default_imp_);
 
-void test3() {
-	tll::logger log("logfile.txt", tll::logger::CRITICAL);
-	log.message_write("the first message", tll::logger::LOW);
-	log.message_write("the second message", tll::logger::MEDIUM);
-	log.message_write("the third message", tll::logger::CRITICAL);
-}
+    log.message_write("the first message", tll::logger::LOW);
+    log.message_write("the second message", tll::logger::MEDIUM);
+    log.message_write("the third message", tll::logger::CRITICAL);
+    
+    std::ifstream file("logFile.txt");
+    if (file.is_open()) {
+      std::getline(file, msg_string_);
+      file.close();
+    }
 
-void test4() {
-	tll::logger log("logfile.txt", tll::logger::LOW);
-	log.set_default_importance(tll::logger::MEDIUM);
-	log.message_write("the first message", tll::logger::LOW);
-	log.message_write("the second message", tll::logger::MEDIUM);
-	log.message_write("the third message", tll::logger::CRITICAL);
-}
+    std::filesystem::remove("logFile.txt");
+  }
 
-void test5() {
-	tll::logger log("logfile.txt", tll::logger::LOW);
-	log.set_default_importance(tll::logger::CRITICAL);
-	log.message_write("the first message", tll::logger::LOW);
-	log.message_write("the second message", tll::logger::MEDIUM);
-	log.message_write("the third message", tll::logger::CRITICAL);
-}
+  auto set_default_foo(tll::logger::importance set_default_imp_) -> void {
+    tll::logger log("logFile.txt", tll::logger::LOW); 
 
-void test6() {
-	tll::logger log("logfile.txt", tll::logger::CRITICAL);
-	log.set_default_importance(tll::logger::LOW);
-	log.message_write("the first message", tll::logger::LOW);
-	log.message_write("the second message", tll::logger::MEDIUM);
-	log.message_write("the third message", tll::logger::CRITICAL);
-}
+    log.set_default_importance(set_default_imp_);
+
+    log.message_write("test message"); 
+
+    std::ifstream file("logFile.txt");
+    if (file.is_open()) {
+      std::getline(file, msg_string_);
+      file.close();
+    }
+
+    std::filesystem::remove("logFile.txt");
+  }
+
+public:
+  auto writeMessage_lowDefault_123() -> bool {
+    msg_string_ = "";
+    write_msg_foo(tll::logger::LOW);
+
+    if (!msg_string_.empty() &&
+      msg_string_.find("the first message") != std::string::npos &&
+      msg_string_.find("the second message") != std::string::npos &&
+      msg_string_.find("the third message") != std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+
+  auto writeMessage_mediumDefault_23() -> bool {
+    msg_string_ = "";
+    write_msg_foo(tll::logger::MEDIUM);
+
+    if (!msg_string_.empty() &&
+      msg_string_.find("the second message") != std::string::npos &&
+      msg_string_.find("the third message") != std::string::npos &&
+      msg_string_.find("the first message") == std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+
+  auto writeMessage_criticalDefault_3() -> bool {
+    msg_string_ = "";
+    write_msg_foo(tll::logger::CRITICAL);
+
+    if (!msg_string_.empty() &&
+      msg_string_.find("the third message") != std::string::npos &&
+      msg_string_.find("the first message") == std::string::npos &&
+      msg_string_.find("the second message") == std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+
+  auto setDefault_lowDefault_low() -> bool {
+    msg_string_ = "";
+    set_default_foo(tll::logger::LOW);
+
+    if (!msg_string_.empty() && msg_string_.find("test message") != std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+
+  auto setDefault_mediumDefault_medium() -> bool {
+    msg_string_ = "";
+    set_default_foo(tll::logger::MEDIUM);
+
+    if (!msg_string_.empty() && msg_string_.find("test message") != std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+
+  auto setDefault_criticalDefault_critical() -> bool {
+    msg_string_ = "";
+    set_default_foo(tll::logger::CRITICAL);
+
+    if (!msg_string_.empty() && msg_string_.find("test message") != std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+
+  auto writeMessage_leftShiftOperator_all() -> bool {
+    msg_string_ = "";
+
+    tll::logger log("logFile.txt", tll::logger::LOW);
+    log << "Left shift operator";
+
+    std::ifstream file("logFile.txt");
+    if (file.is_open()) {
+      std::getline(file, msg_string_);
+      file.close();
+    }
+
+    std::filesystem::remove("logFile.txt");
+
+    if (!msg_string_.empty() && msg_string_.find("Left shift operator") != std::string::npos) {
+      return true;
+    }
+    return false;
+  }
+};
 
 int main() {
-	test1(); //123
-	test2(); //23 
-	test3(); //3
-	test4(); //23
-	test5(); //3
-	test6(); //123
+  test_logger testlog;
+
+  std::cout << "writeMessage_lowDefault_123\t" << testlog.writeMessage_lowDefault_123() << std::endl;
+  std::cout << "writeMessage_mediumDefault_23\t" << testlog.writeMessage_mediumDefault_23() << std::endl;
+  std::cout << "writeMessage_criticalDefault_3\t" << testlog.writeMessage_criticalDefault_3() << std::endl;
+  std::cout << "writeMessage_leftShiftOperator_all\t" << testlog.writeMessage_leftShiftOperator_all() << std::endl;
+  std::cout << "setDefault_lowDefault_low\t" << testlog.setDefault_lowDefault_low() << std::endl;
+  std::cout << "setDefault_mediumDefault_medium\t" << testlog.setDefault_mediumDefault_medium() << std::endl;
+  std::cout << "setDefault_criticalDefault_critical\t" << testlog.setDefault_criticalDefault_critical() << std::endl;
+
+  return 0;
 }
