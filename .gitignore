@@ -1,4 +1,13 @@
+
 build/
-.git/
-.o
-.gch
+*.o
+*.gch
+*.d
+*.so
+*.a
+
+logger
+test
+
+*.log
+logFile.txt

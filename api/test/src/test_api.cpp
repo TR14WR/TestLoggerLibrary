@@ -17,7 +17,10 @@ private:
     
     std::ifstream file("logFile.txt");
     if (file.is_open()) {
-      std::getline(file, msg_string_);
+      std::string line;
+      while (std::getline(file, line)) {
+        msg_string_ += line + "\n";
+      }
       file.close();
     }
 
@@ -33,7 +36,10 @@ private:
 
     std::ifstream file("logFile.txt");
     if (file.is_open()) {
-      std::getline(file, msg_string_);
+      std::string line;
+      while (std::getline(file, line)) {
+        msg_string_ += line + "\n";
+      }
       file.close();
     }
 
@@ -118,7 +124,10 @@ public:
 
     std::ifstream file("logFile.txt");
     if (file.is_open()) {
-      std::getline(file, msg_string_);
+      std::string line;
+      while (std::getline(file, line)) {
+        msg_string_ += line + "\n";
+      }
       file.close();
     }
 

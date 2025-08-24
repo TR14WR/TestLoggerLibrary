@@ -1,10 +1,10 @@
 #include <mutex>
 #include <stdexcept>
 #include <thread>
-#include <optional>
-#include <iostream>
 #include <string>
 #include <vector>
+#include <optional>
+#include <iostream>
 #include "../../api/logger.h"
 
 auto parse_message_importance(std::string_view sv) -> tll::logger::importance {

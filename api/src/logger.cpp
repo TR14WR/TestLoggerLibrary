@@ -44,7 +44,7 @@ auto logger::set_default_importance(importance imp) noexcept -> void {
 
 auto logger::message_write(std::string_view text, importance imp) const -> void {
 	if (imp < pimpl_->default_importance_) {
-		throw std::invalid_argument("Message importance is less than default importance");
+		return; // Filter out messages with lower importance
 	}
 	std::time_t tt = std::time(nullptr);
 	pimpl_->file_ << text << "\t"
