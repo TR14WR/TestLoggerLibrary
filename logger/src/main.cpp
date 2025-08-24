@@ -3,9 +3,8 @@
 #include <thread>
 #include <string>
 #include <vector>
-#include <optional>
 #include <iostream>
-#include "../../api/logger.h"
+#include <logger.h>
 
 auto parse_message_importance(std::string_view sv) -> tll::logger::importance {
   if (sv == "low")
@@ -25,49 +24,49 @@ int main(int argc, char* argv[]) {
       return 1;
     }
 
-    auto log = std::make_optional<tll::logger>(argv[1], parse_message_importance(argv[2]));
+    auto log = tll::logger(argv[1], parse_message_importance(argv[2]));
     
-    std::string message;
-    std::string importanceText;
-    std::mutex mutex;
-    auto write_message = [&log, &mutex](std::string message, std::string importanceText) {
+    std::string message_;
+    std::string importanceText_;
+    std::mutex mutex_;
+    auto write_message = [&log, &mutex_](std::string message_, std::string importanceText_) {
       try {
-        std::lock_guard<std::mutex> lg(mutex);
+        std::lock_guard<std::mutex> lg(mutex_);
         
-        if (importanceText.empty()) {
-          log.value().message_write(message);
+        if (importanceText_.empty()) {
+          log.message_write(message_);
         } else {
-          auto importance = parse_message_importance(importanceText);
-          log.value().message_write(message, importance);
+          auto importance_ = parse_message_importance(importanceText_);
+          log.message_write(message_, importance_);
         }
       }
       catch (const std::exception& ex) {
-        std::lock_guard<std::mutex> lg(mutex);
-        std::cerr << "Error writing message: " << ex.what() << std::endl;
+        std::lock_guard<std::mutex> lg(mutex_);
+        //std::cerr << "Error writing message: " << ex.what() << std::endl;
       }
     };
-
+    
     std::vector<std::thread> threadVector;
 
     std::cout << "Please enter a blank message to end your entry." << std::endl;
     while (true) {
       std::cout << "Enter a message: ";
-      std::getline(std::cin, message);
+      std::getline(std::cin, message_);
 
-      if (message.empty()) {
+      if (message_.empty()) {
         std::cout << "Empty message entered, input stopped" << std::endl;
         break;
       }
 
       std::cout << "Enter a message importance(low, medium, critical): ";
-      std::getline(std::cin, importanceText);
+      std::getline(std::cin, importanceText_);
 
       try {
-        std::thread tr(write_message, std::move(message), std::move(importanceText));
-        threadVector.push_back(std::move(tr));
+        std::thread tr_(write_message, std::move(message_), std::move(importanceText_));
+        threadVector.push_back(std::move(tr_));
       }
       catch (const std::exception& ex) {
-        std::cerr << "Error creating thread: " << ex.what() << std::endl;
+        //std::cerr << "Error creating thread: " << ex.what() << std::endl;
       }
     }
 
@@ -77,14 +76,14 @@ int main(int argc, char* argv[]) {
           thread.join(); 
         }
         catch (const std::exception& ex) { 
-          std::cerr << "Error joining thread: " << ex.what() << std::endl; 
+          //std::cerr << "Error joining thread: " << ex.what() << std::endl; 
         }
       }
     }
     return 0;
   }
   catch (const std::exception& ex) {
-    std::cerr << "Fatal error: " << ex.what() << std::endl;
+    //std::cerr << "Fatal error: " << ex.what() << std::endl;
     return 1;
   }
 }

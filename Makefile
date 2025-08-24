@@ -1,7 +1,7 @@
 export CXX = g++
 export INCLUDE_DIR = $(CURDIR)/api
 export BUILD_DIR = $(CURDIR)/build
-export CXXFLAGS = -std=c++17 -Wall -MMD -I$(INCLUDE_DIR)
+export CXXFLAGS = -std=c++17 -Wall -I$(INCLUDE_DIR)
 export UTIL = $(BUILD_DIR)/logger
 export LIB = $(BUILD_DIR)/liblogger.so
 export TEST = $(BUILD_DIR)/test

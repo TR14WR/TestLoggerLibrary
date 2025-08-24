@@ -1,4 +1,4 @@
-#include "../../logger.h"
+#include <logger.h>
 #include <iostream>
 #include <filesystem>
 #include <string>
@@ -143,12 +143,12 @@ public:
 int main() {
   test_logger testlog;
 
-  std::cout << "writeMessage_lowDefault_123\t" << testlog.writeMessage_lowDefault_123() << std::endl;
-  std::cout << "writeMessage_mediumDefault_23\t" << testlog.writeMessage_mediumDefault_23() << std::endl;
-  std::cout << "writeMessage_criticalDefault_3\t" << testlog.writeMessage_criticalDefault_3() << std::endl;
+  std::cout << "writeMessage_lowDefault_123\t\t" << testlog.writeMessage_lowDefault_123() << std::endl;
+  std::cout << "writeMessage_mediumDefault_23\t\t" << testlog.writeMessage_mediumDefault_23() << std::endl;
+  std::cout << "writeMessage_criticalDefault_3\t\t" << testlog.writeMessage_criticalDefault_3() << std::endl;
   std::cout << "writeMessage_leftShiftOperator_all\t" << testlog.writeMessage_leftShiftOperator_all() << std::endl;
-  std::cout << "setDefault_lowDefault_low\t" << testlog.setDefault_lowDefault_low() << std::endl;
-  std::cout << "setDefault_mediumDefault_medium\t" << testlog.setDefault_mediumDefault_medium() << std::endl;
+  std::cout << "setDefault_lowDefault_low\t\t" << testlog.setDefault_lowDefault_low() << std::endl;
+  std::cout << "setDefault_mediumDefault_medium\t\t" << testlog.setDefault_mediumDefault_medium() << std::endl;
   std::cout << "setDefault_criticalDefault_critical\t" << testlog.setDefault_criticalDefault_critical() << std::endl;
 
   return 0;
