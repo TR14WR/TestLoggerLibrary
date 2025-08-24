@@ -1,4 +1,5 @@
 SRC = src/main.cpp
+LIB_PATH = ../api/src/logger.cpp
 
-$(UTIL): $(SRC)
-	$(CXX) -c $(CXXFLAGS) -o $@.o $^
+$(UTIL): $(SRC) $(LIB_PATH)
+	$(CXX) $(CXXFLAGS) -pthread -o $@ $^

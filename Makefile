@@ -4,7 +4,7 @@ export BUILD_DIR = $(CURDIR)/build
 export CXXFLAGS = -std=c++17 -Wall -MMD -I$(INCLUDE_DIR)
 export UTIL = $(BUILD_DIR)/logger
 export LIB = $(BUILD_DIR)/liblogger.so
-export test = $(BUILD_DIR)/api/test
+export TEST = $(BUILD_DIR)/test
 export LDFLAGS = -Wl,-rpath,$$origin
 
 .PHONY: all clean test

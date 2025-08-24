@@ -1,4 +1,4 @@
 SRC = src/test_api.cpp
 
-test: $(SRC)
+$(TEST): $(SRC)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIB)

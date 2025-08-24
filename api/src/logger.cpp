@@ -24,7 +24,7 @@ namespace {
 }
 
 struct logger::impl {
-	impl(const std::filesystem::path& path, importance imp) : file_(path, std::ios::out | std::ios::app), default_importance_(imp) 
+	impl(const std::filesystem::path& path, importance imp = tll::logger::LOW) : file_(path, std::ios::out | std::ios::app), default_importance_(imp) 
 	{}
 	std::ofstream file_;
 	importance default_importance_;
