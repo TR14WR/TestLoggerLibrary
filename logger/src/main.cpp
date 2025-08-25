@@ -17,6 +17,9 @@ auto parse_message_importance(std::string_view sv) -> tll::logger::importance {
 }
 
 int main(int argc, char* argv[]) {
+
+    auto err_log = tll::logger("errorLog.log", tll::logger::CRITICAL);
+  
   try {
     if (argc < 3) {
       std::cerr << "Usage: " << argv[0] << " <log_file_path> <default_importance>" << std::endl;
@@ -25,11 +28,10 @@ int main(int argc, char* argv[]) {
     }
 
     auto log = tll::logger(argv[1], parse_message_importance(argv[2]));
-    
     std::string message_;
     std::string importanceText_;
     std::mutex mutex_;
-    auto write_message = [&log, &mutex_](std::string message_, std::string importanceText_) {
+    auto write_message = [&log, &mutex_, &err_log](std::string message_, std::string importanceText_) {
       try {
         std::lock_guard<std::mutex> lg(mutex_);
         
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]) {
       }
       catch (const std::exception& ex) {
         std::lock_guard<std::mutex> lg(mutex_);
-        //std::cerr << "Error writing message: " << ex.what() << std::endl;
+        err_log << std::string("Error writing message: ") + ex.what();
       }
     };
     
@@ -66,7 +68,7 @@ int main(int argc, char* argv[]) {
         threadVector.push_back(std::move(tr_));
       }
       catch (const std::exception& ex) {
-        //std::cerr << "Error creating thread: " << ex.what() << std::endl;
+        err_log << std::string("Error creating thread: ") + ex.what();
       }
     }
 
@@ -76,14 +78,14 @@ int main(int argc, char* argv[]) {
           thread.join(); 
         }
         catch (const std::exception& ex) { 
-          //std::cerr << "Error joining thread: " << ex.what() << std::endl; 
+          err_log << std::string("Error joining thread: ") + ex.what();
         }
       }
     }
     return 0;
   }
   catch (const std::exception& ex) {
-    //std::cerr << "Fatal error: " << ex.what() << std::endl;
+    err_log << std::string("Fatal error: ") + ex.what();
     return 1;
   }
 }
